@@ -138,6 +138,7 @@ class Seq2SeqModel(object):
                 encoder_inputs,
                 decoder_inputs,
                 cell,
+                cell,
                 num_encoder_symbols=source_vocab_size,
                 num_decoder_symbols=target_vocab_size,
                 embedding_size=size,
