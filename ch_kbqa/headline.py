@@ -37,8 +37,10 @@ if not os.path.exists(train_dir):
 # We use a number of buckets and pad to the closest one for efficiency.
 # See seq2seq_model.Seq2SeqModel for details of how they work.
 # article length padded to 120 and summary padded to 30
-buckets = [(4, 3), (5, 3), (6, 3), (8, 3), (40, 3)]
-# buckets = [(31, 3)]
+# tensorflow 1.0
+# buckets = [(4, 3), (5, 3), (6, 3), (8, 3), (40, 3)]
+# tensorflow 1.2+
+buckets = [(31, 3)]
 
 
 # class LargeConfig(object):
