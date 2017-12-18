@@ -159,7 +159,8 @@ def create_model(session, forward_only):
 
     ckpt = tf.train.get_checkpoint_state(FLAGS.train_dir)
     if ckpt:
-        model_checkpoint_path = ckpt.model_checkpoint_path
+        model_checkpoint_path = os.path.join(train_dir, ckpt.model_checkpoint_path)
+        # model_checkpoint_path = ckpt.model_checkpoint_path
         print("Reading model parameters from %s" % model_checkpoint_path)
         saver = tf.train.Saver()
         saver.restore(session, tf.train.latest_checkpoint(FLAGS.train_dir))
@@ -232,8 +233,8 @@ def train():
                     sess.run(model.learning_rate_decay_op)
                 previous_losses.append(loss)
                 # Save checkpoint and zero timer and loss.
-                checkpoint_path = os.path.join(FLAGS.train_dir, "headline_large.ckpt")
-                model.saver.save(sess, checkpoint_path, global_step=model.global_step)
+                # checkpoint_path = os.path.join(FLAGS.train_dir, "headline_large.ckpt")
+                model.saver.save(sess, "headline_large.ckpt", global_step=model.global_step)
                 step_time, loss = 0.0, 0.0
                 # Run evals on development set and print their perplexity.
                 for bucket_id in xrange(len(buckets)):
