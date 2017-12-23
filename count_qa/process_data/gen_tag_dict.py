@@ -26,7 +26,7 @@ def load_tag(tag_list):
 
 
 def load_kb():
-    kb_path = '../../data/to_DB.json'
+    kb_path = '../../data/new_data_labeled.json'
     with open(kb_path) as fin:
         kb_dict = json.load(fin, encoding='utf-8')
     print('load kb succeed')
@@ -78,9 +78,29 @@ def get_rel(tag_list):
         for rel, count in res:
             print>>fout, ' '.join((rel, str(count))).encode('utf-8')
         print>>fout
+    return type_dict
 
 
-def get_entity(tag_list):
+def gen_rel_dict(type_dict):
+    rel_dict = {}
+    for value_type, rel_count in type_dict.iteritems():
+        res = sorted(rel_count.items(), key=lambda x: x[1], reverse=True)
+        rel_key_list = []
+        rel_list = []
+        for rel, count in res:
+            if count < 2:
+                continue
+            rel_list.append(rel)
+            if count >= 5:
+                rel_key_list.append(rel)
+        rel_key_list = list(set(rel_key_list))
+        rel_list = list(set(rel_list))
+        if rel_key_list:
+            rel_dict[' '.join(rel_key_list)] = rel_list
+    return rel_dict
+
+
+def get_entity_from_tag(tag_list):
     # kb_dict = load_kb()
     entity_list = load_tag(tag_list)
     gen_kb_mini(tag_list, entity_list)
@@ -95,6 +115,18 @@ def get_entity_from_label(label_list):
         if label in label_list:
             entity_list.append(entity_keyid)
     gen_kb_mini(label_list, entity_list)
+
+
+def gen_tag_rel_dict(tag_list, tag_label):
+    if tag_label == 'tag':
+        get_entity_from_tag(tag_list)
+    elif tag_label == 'label':
+        get_entity_from_label(tag_list)
+    type_dict = get_rel(tag_list)
+    rel_dict = gen_rel_dict(type_dict)
+    out_path = 'tag_rel_dict_test'
+    with open(out_path, 'a') as fout:
+        print>>fout, json.dumps({' '.join(tag_list): rel_dict}, encoding='utf-8', ensure_ascii=False, indent=4)
 
 
 def read_kb_mini():
@@ -123,7 +155,39 @@ def change_kb_mini():
                 print>>fout, json.dumps({key: value}, encoding='utf-8', ensure_ascii=False)
 
 
+def change_tag_entity_dict():
+    in_path = 'tag_entity_dict'
+    out_path = 'tag_entity_dict_test'
+    fout = open(out_path, 'wb')
+    with open(in_path) as fin:
+        for line in fin:
+            ll = json.loads(line.decode('utf-8').strip(), encoding='utf-8')
+            for key, value in ll.iteritems():
+                if key:
+                    print>> fout, json.dumps({key: value}, ensure_ascii=False, encoding='utf-8')
+
+
+def gen_tag_entity_dict():
+    kb = load_kb()
+    tag_entity_dict = {}
+    for entity_keyid, infor_dict in kb.iteritems():
+        if 'taglist' in infor_dict.keys():
+            tag_list = infor_dict['taglist'].split(',')
+        if not tag_list:
+            continue
+        for tag in tag_list:
+            if tag in tag_entity_dict.keys():
+                tag_entity_dict[tag].append(entity_keyid)
+            else:
+                tag_entity_dict[tag] = [entity_keyid]
+    out_path = 'tag_entity_dict'
+    with open(out_path, 'w') as fout:
+        for tag, entity_keyid_list in tag_entity_dict.iteritems():
+            print>>fout, json.dumps({tag:entity_keyid_list}, ensure_ascii=False, encoding='utf-8')
+
+
 if __name__ == '__main__':
+    # gen_tag_entity_dict()
     # tag_list = [u'国家']
     # get_entity(tag_list)
     # change_kb_mini()
@@ -133,4 +197,7 @@ if __name__ == '__main__':
 
     # tag_list = [u'国家']
     # get_rel(tag_list)
-    read_kb_mini()
+    # read_kb_mini()
+    # gen_tag_rel_dict([u'山', u'山峰', u'山脉'], 'tag')
+    # gen_tag_rel_dict([u'国家'], 'label')
+    change_tag_entity_dict()
