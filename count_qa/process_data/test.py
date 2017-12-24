@@ -1,4 +1,6 @@
+import json
 
-file = 'test_file'
-with open(file, 'a') as fout:
-    print>>fout, 'aello'.encode('utf-8')
+file = 'tag_rel_dict'
+with open(file) as fin:
+    ll = json.load(fin, encoding='utf-8')
+print(ll)

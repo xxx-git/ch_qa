@@ -9,23 +9,31 @@ import heapq
 import time
 
 
-def load_tag_dict():
-    file_path = 'process_data/tag_dict'
-    with open(file_path) as fin:
-        tag_dict_list = json.load(fin, encoding='utf-8')
-    return tag_dict_list
-tag_dict_list = load_tag_dict()
+# def load_tag_dict():
+#     file_path = 'process_data/tag_dict'
+#     with open(file_path) as fin:
+#         tag_dict_list = json.load(fin, encoding='utf-8')
+#     return tag_dict_list
+# tag_dict_list = load_tag_dict()
 # tag_dict_list = []
 
-
-def load_entity_list(tag):
-    entity_list = []
-    file_path = 'process_data/mountain_entity'
+def load_tag_dict():
+    tag_dict = {}
+    file_path = 'process_data/tag_rel_dict'
     with open(file_path) as fin:
-        for line in fin:
-            entity_list.append(line.split(':')[0])
-    return list(set(entity_list))
-entity_list = load_entity_list('')
+        tag_dict = json.load(fin, encoding='utf-8')
+    return tag_dict
+tag_dict = load_tag_dict()
+
+
+# def load_entity_list(tag):
+#     entity_list = []
+#     file_path = 'process_data/mountain_entity'
+#     with open(file_path) as fin:
+#         for line in fin:
+#             entity_list.append(line.split(':')[0])
+#     return list(set(entity_list))
+# entity_list = load_entity_list('')
 # entity_list = []
 
 
@@ -40,27 +48,50 @@ kb_mini = load_mini_kb()
 
 def choose_tag_predicate(entity_tag, rel_str):
     tag_sim_score = 0
-    tag_dict_max = None
-    for tag_dict in tag_dict_list:
-        tag_list = tag_dict['tag_list']
+    rel_dict_max = None
+    tag_list_max = None
+
+    for tag_str, rel_dict in tag_dict.iteritems():
+        tag_list = tag_str.split()
         for tag in tag_list:
             score = get_similarity(tag, entity_tag)
             if score > tag_sim_score:
-                tag_dict_max = tag_dict
+                rel_dict_max = rel_dict
+                tag_list_max = tag_list
                 tag_sim_score = score
-    print(','.join(tag_dict_max['tag_list']))
+    print('tag: ' + ','.join(tag_list_max))
 
-    pre_cmp_dict = tag_dict_max['predicate_compare']
     pre_sim_score = 0
     pre_list_max = None
-    for predicate, pre_list in pre_cmp_dict.iteritems():
-        score = get_similarity(predicate, rel_str)
-        # print(predicate)
-        # print(score)
-        if score > pre_sim_score:
-            pre_sim_score = score
-            pre_list_max = pre_list
-    return tag_dict_max['tag_list'], pre_list_max
+    for pred_str, pre_list in rel_dict_max.iteritems():
+        pred_list = pred_str.split()
+        for predicate in pred_list:
+            score = get_similarity(predicate, rel_str)
+            if score > pre_sim_score:
+                pre_sim_score = score
+                pre_list_max = pre_list
+    print('predicate: ' + ','.join(pre_list_max))
+    return tag_list_max, pre_list_max
+
+
+    # for tag_dict in tag_dict_list:
+    #     tag_list = tag_dict['tag_list']
+    #     for tag in tag_list:
+    #         score = get_similarity(tag, entity_tag)
+    #         if score > tag_sim_score:
+    #             tag_dict_max = tag_dict
+    #             tag_sim_score = score
+    # pre_cmp_dict = tag_dict_max['predicate_compare']
+    # pre_sim_score = 0
+    # pre_list_max = None
+    # for predicate, pre_list in pre_cmp_dict.iteritems():
+    #     score = get_similarity(predicate, rel_str)
+    #     # print(predicate)
+    #     # print(score)
+    #     if score > pre_sim_score:
+    #         pre_sim_score = score
+    #         pre_list_max = pre_list
+    # return tag_dict_max['tag_list'], pre_list_max
 
 
 def search_entity_by_tag(tag_list, entity_range):

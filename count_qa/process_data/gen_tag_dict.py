@@ -49,11 +49,15 @@ def gen_kb_mini(tag_list, entity_list):
     for entity_keyid in entity_list:
         entity_dict = neo4j_data.search_node_neo4j(entity_keyid)
         tmp_dict[entity_keyid] = entity_dict
-    print(len(tmp_dict))
-    out_path = 'kb_mini_test'
+    kb_mini_path = 'kb_mini'
+    with open(kb_mini_path) as fin:
+        kb_mini_dict = json.load(fin, encoding='utf-8')
     tag_key = ' '.join(tag_list)
-    with open(out_path, 'a') as fout:
-        print>>fout, json.dumps({tag_key: tmp_dict}, encoding='utf-8', ensure_ascii=False)
+    if tag_key not in kb_mini_dict.keys():
+        print('add entity: ' + str(len(tmp_dict)))
+        kb_mini_dict[tag_key] = tmp_dict
+        with open(kb_mini_path, 'wb') as fout:
+            json.dump(kb_mini_dict, fout, encoding='utf-8', ensure_ascii=False)
 
 
 def get_rel(tag_list):
@@ -124,9 +128,18 @@ def gen_tag_rel_dict(tag_list, tag_label):
         get_entity_from_label(tag_list)
     type_dict = get_rel(tag_list)
     rel_dict = gen_rel_dict(type_dict)
-    out_path = 'tag_rel_dict_test'
-    with open(out_path, 'a') as fout:
-        print>>fout, json.dumps({' '.join(tag_list): rel_dict}, encoding='utf-8', ensure_ascii=False, indent=4)
+    # tag_rel_dict = {}
+    file_path = 'tag_rel_dict'
+    with open(file_path) as fin:
+        tag_rel_dict = json.load(fin, encoding='utf-8')
+    tag_key = ' '.join(tag_list)
+    if tag_key not in tag_rel_dict.keys():
+        tag_rel_dict[tag_key] = rel_dict
+        with open(file_path, 'w') as fout:
+            json.dump(tag_rel_dict, fout, encoding='utf-8', ensure_ascii=False, indent=4)
+    # out_path = 'tag_rel_dict_test'
+    # with open(out_path, 'a') as fout:
+    #     print>>fout, json.dumps({' '.join(tag_list): rel_dict}, encoding='utf-8', ensure_ascii=False, indent=4)
 
 
 def read_kb_mini():
@@ -199,5 +212,5 @@ if __name__ == '__main__':
     # get_rel(tag_list)
     # read_kb_mini()
     # gen_tag_rel_dict([u'山', u'山峰', u'山脉'], 'tag')
-    # gen_tag_rel_dict([u'国家'], 'label')
-    change_tag_entity_dict()
+    gen_tag_rel_dict([u'国家'], 'label')
+    # change_tag_entity_dict()
