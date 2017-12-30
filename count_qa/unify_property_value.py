@@ -265,5 +265,5 @@ if __name__ == '__main__':
     # print pro, value, value_type
     # pro, value, value_type = unify_value('重点景点', "三个")
     # print pro, value, value_type
-    pro, value, value_type = unify_value(u"人口数量", u'321,163,157（2015年）')
+    pro, value, value_type = unify_value(u"出生日期", u'1993年3月2日')
     print pro, value, value_type

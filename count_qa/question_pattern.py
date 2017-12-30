@@ -1,11 +1,9 @@
 # -*- coding:utf-8 -*-
 import re
-import sys
-from segment import seg_word, ensure_unicode
 from get_entity import parse_sentence
 import count_function
 import time
-from data_manager import tag_dict, tag_dict_format, rel_dict_format, key_dict_format
+from data_manager import tag_dict, key_dict_format
 import vector_manager
 
 

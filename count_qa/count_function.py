@@ -3,9 +3,7 @@ from data_manager import tag_dict, kb_mini
 from get_entity import get_popular_entity
 from unify_property_value import unify_value
 from vector_manager import get_similarity
-import norm_value
 import heapq
-import time
 
 
 def choose_tag_predicate(entity_tag, rel_str):
@@ -178,10 +176,10 @@ def count_age_diff(entity_1, entity_2):
     if u'出生日期' in node_2.keys():
         birth_2 = node_2[u'出生日期']
     if birth_1 and birth_2:
-        birth_list_1 = norm_value.get_date_value(birth_1)
-        birth_list_2 = norm_value.get_date_value(birth_2)
-        # birth_list_1 = unify_value(u'出生日期',birth_1)
-        # birth_list_2 = unify_value(u'出生日期',birth_2)
+        # birth_list_1 = norm_value.get_date_value(birth_1)
+        # birth_list_2 = norm_value.get_date_value(birth_2)
+        _, birth_list_1, _ = unify_value(u'出生日期',birth_1)
+        _, birth_list_2, _ = unify_value(u'出生日期',birth_2)
         if birth_list_1[0] > birth_list_2[0]:
             flag = False
             if birth_list_1[1] >= birth_list_2[1]:
@@ -201,18 +199,6 @@ def count_age_diff(entity_1, entity_2):
         return flag, year, month
     else:
         return None
-
-
-# def choose_node(node_list):
-#     ret_node = None
-#     max_popularity = 0
-#     for node in node_list:
-#         # if node['subname'] == 'NO_SUBNAME':
-#         tmp_pop = len(node)
-#         if tmp_pop > max_popularity:
-#             max_popularity = tmp_pop
-#             ret_node = node
-#     return ret_node
 
 
 if __name__ == '__main__':
