@@ -1,12 +1,58 @@
 # -*- coding:utf-8 -*-
 import datetime
 import sys
-import codecs
 from neo4jrestclient.client import GraphDatabase
 from neo4jrestclient import client
 # reload(sys)
 # sys.setdefaultencoding('utf-8')
 import time
+import json
+
+
+def load_mini_kb():
+    file_path = 'process_data/kb_mini'
+    with open(file_path) as fin:
+        kb_mini = json.load(fin, encoding='utf-8')
+    print('load kb_mini succeed!')
+    return kb_mini
+kb_mini = load_mini_kb()
+
+
+def load_tag_dict():
+    # tag_dict = {}
+    file_path = 'process_data/tag_rel_dict'
+    with open(file_path) as fin:
+        tag_dict = json.load(fin, encoding='utf-8')
+    return tag_dict
+tag_dict = load_tag_dict()
+
+
+def tag_dict_format():
+    ret_tag_dict = {}
+    for tag_str, rel_dict in tag_dict.iteritems():
+        tag_list = tag_str.split()
+        for tag in tag_list:
+            ret_tag_dict[tag] = tag_str
+    return ret_tag_dict
+
+
+def key_dict_format(key_dict):
+    ret_key_dict = {}
+    for key_str, _ in key_dict.iteritems():
+        key_list = key_str.split()
+        for key in key_list:
+            ret_key_dict[key] = key_str
+    return ret_key_dict
+
+
+def rel_dict_format(tag_key):
+    ret_rel_dict = {}
+    rel_dict = tag_dict[tag_key]
+    for rel_str, pred_list in rel_dict.iteritems():
+        rel_list = rel_str.split()
+        for rel in rel_list:
+            ret_rel_dict[rel] = pred_list
+    return ret_rel_dict
 
 
 def search_triple_neo4j(sub, rel=None, obj=None):

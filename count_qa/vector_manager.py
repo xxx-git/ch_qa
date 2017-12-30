@@ -65,6 +65,20 @@ def get_vector_by_list(word_list):
     return text_vector
 
 
+def get_max_similarity(seg_list, key_dict):
+    ret_word = ''
+    ret_value = None
+    max_score = 0
+    for word in seg_list:
+        for key, value in key_dict.iteritems():
+            score = get_similarity(key, word)
+            if score > max_score:
+                ret_word = word
+                ret_value = value
+                max_score = score
+    return ret_word, ret_value, max_score
+
+
 if __name__ == '__main__':
     # print(get_similarity(u'经营范围', u'经营产业'))
     # print(get_similarity(u'总部地点', u'经营产业'))

@@ -5,6 +5,8 @@ from segment import seg_word, ensure_unicode
 from get_entity import parse_sentence
 import count_function
 import time
+from data_manager import tag_dict, tag_dict_format, rel_dict_format, key_dict_format
+import vector_manager
 
 
 chinese = re.compile(u'[\u4e00-\u9fa5]')
@@ -16,6 +18,33 @@ person_age_compare = u'^(.* )?(.+)/nr.* 比/p(.* )?(.+)/n.* (大|小)/.* .*$'
 country_population_compare = u'(.+)/n(s|z)(.*)?人口(.*)?比/p(.* )?(.+)/ns(.*)?多/.*(.*)?'
 
 entity_rank = u'^(.+)/n(s|z)? .*( .+)/n(s|z)?$'
+
+
+def t_rank_entity_question(seg_list, ques_pos, ner_list):
+    tag_key_dict = key_dict_format(tag_dict)
+    _, tag_key, score = vector_manager.get_max_similarity(seg_list, tag_key_dict)
+    rel_dict = tag_dict[tag_key]
+    rel_key_dict = key_dict_format(rel_dict)
+    _, rel_key, score = vector_manager.get_max_similarity(seg_list, rel_key_dict)
+    entity_range = ''
+    order_str = None
+    if u'/a' or u'/m' in ques_pos:
+        word_pos_list = ques_pos.split()
+        for i, word_pos in enumerate(word_pos_list):
+            word, pos = word_pos.split('/')
+            if ner_list[i] == 'B' and not entity_range:
+                entity_range = word
+            if pos == 'm':
+                order_str = word
+    if not order_str:
+        if u'最' in ques_pos:
+            order_str = u'第一'
+    print(tag_key)
+    print(rel_key)
+    rel_list = rel_dict[rel_key]
+    tag_list = tag_key.split()
+    print(' '.join((entity_range, order_str, rel_key, tag_key)))
+    return count_function.t_count_most_question(entity_range, order_str, tag_list, rel_list)
 
 
 def rank_entity_question(match, ques_pos, ner_list):
@@ -108,7 +137,7 @@ pattern_dict = {
     person_height_compare: compare_person_height,
     person_age_compare: compare_person_age,
     country_population_compare: compare_country_population,
-    entity_rank: rank_entity_question
+    # entity_rank: rank_entity_question
 }
 
 
@@ -121,6 +150,9 @@ def classify_ques(question):
     print(ques_pos)
     print(' '.join(ner_list))
     ans = None
+    if u'最' in ques_pos:
+        ans = t_rank_entity_question(seg_list, ques_pos, ner_list)
+        return ans
     for pattern_str, target_function in pattern_dict.iteritems():
         pattern = re.compile(pattern_str)
         m = pattern.match(ques_pos)
@@ -138,12 +170,14 @@ if __name__ == '__main__':
    #  for i in range(5
    localtime = time.asctime(time.localtime(time.time()))
    print(localtime)
-   print(classify_ques(u'世界最高的山'))
+   print(classify_ques(u'门票最贵的山'))
    print('------------------------------')
-   print(classify_ques(u'中国最高的山'))
-   print('------------------------------')
-   print(classify_ques(u'美国人口比印度多多少'))
-   print('------------------------------')
-   print(classify_ques(u'杨洋比鹿晗大多少岁'))
-   print('------------------------------')
-   print(classify_ques(u'杨洋比鹿晗高多少'))
+   # print(classify_ques(u'中国最高的山'))
+   # print('------------------------------')
+   # print(classify_ques(u'中国最高的山是哪一座'))
+   # print('------------------------------')
+   # print(classify_ques(u'美国人口比印度多多少'))
+   # print('------------------------------')
+   # print(classify_ques(u'杨洋比鹿晗大多少岁'))
+   # print('------------------------------')
+   # print(classify_ques(u'杨洋比鹿晗高多少'))

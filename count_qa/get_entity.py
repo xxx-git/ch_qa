@@ -45,7 +45,7 @@ def get_list_entity_by_tag(entity_tag):
 
 
 if __name__ == '__main__':
-    data = get_popular_entity(u'杨洋')
+    data = get_popular_entity(u'珠穆朗玛峰')
     for key, value in data.iteritems():
         print('%s: %s' % (key, value))
     # print('-----------------------------------------------')
