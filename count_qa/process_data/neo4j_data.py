@@ -56,6 +56,7 @@ def search_node_neo4j(key_id):
     if not results:
         return ret_node_dict
     ret_node_dict = results.graph[0]['nodes'][0]['properties']
+    ret_node_dict['neoId'] = results.graph[0]['nodes'][0]['id']
     # for nodes in results.graph:
     #     nodes_list = nodes['nodes']
     #     if len(nodes_list) > 1:

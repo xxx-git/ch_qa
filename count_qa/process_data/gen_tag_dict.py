@@ -4,7 +4,6 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 import unify_property_value
 import neo4j_data
-from collections import defaultdict
 import json
 
 
@@ -34,7 +33,7 @@ def load_kb():
 
 
 def load_kb_mini():
-    kb_mini_path = 'kb_mini_test'
+    kb_mini_path = 'kb_mini'
     kb_mini = {}
     with open(kb_mini_path) as fin:
         for line in fin:
@@ -137,13 +136,10 @@ def gen_tag_rel_dict(tag_list, tag_label):
         tag_rel_dict[tag_key] = rel_dict
         with open(file_path, 'w') as fout:
             json.dump(tag_rel_dict, fout, encoding='utf-8', ensure_ascii=False, indent=4)
-    # out_path = 'tag_rel_dict_test'
-    # with open(out_path, 'a') as fout:
-    #     print>>fout, json.dumps({' '.join(tag_list): rel_dict}, encoding='utf-8', ensure_ascii=False, indent=4)
 
 
 def read_kb_mini():
-    in_path = 'kb_mini_test'
+    in_path = 'kb_mini'
     kb_mini = {}
     with open(in_path) as fin:
         for line in fin:
@@ -211,6 +207,6 @@ if __name__ == '__main__':
     # tag_list = [u'国家']
     # get_rel(tag_list)
     # read_kb_mini()
-    # gen_tag_rel_dict([u'山', u'山峰', u'山脉'], 'tag')
+    gen_tag_rel_dict([u'山', u'山峰', u'山脉'], 'tag')
     gen_tag_rel_dict([u'国家'], 'label')
     # change_tag_entity_dict()

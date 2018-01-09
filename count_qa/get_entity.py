@@ -25,7 +25,7 @@ def parse_sentence(sentence, seg=True, pos=True, ner=True, el=False):
     else:
         print('seg, pos, ner, el the after depends on the previous one')
     data = json.loads(get_data_url(ask_url))
-    print(data)
+    # print(data)
     return data
 
 
