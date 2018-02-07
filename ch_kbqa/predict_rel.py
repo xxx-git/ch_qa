@@ -70,8 +70,8 @@ def decode_ques(sentence, top_k=10):
         rel = tf.compat.as_str(dest_rev_vocab[index])
         score = logit[index]
         rel_score_list.append((rel, score))
-    for rel, rel_score in rel_score_list:
-        print("%s : %f" % (rel, rel_score))
+    # for rel, rel_score in rel_score_list:
+    #     print("%s : %f" % (rel, rel_score))
     return rel_score_list
 
 
