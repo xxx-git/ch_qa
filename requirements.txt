@@ -12,7 +12,7 @@ jieba==0.38
 Markdown==2.6.9
 mock==2.0.0
 neo4jrestclient==2.1.1
-numpy==1.13.1
+numpy==1.22.0
 pbr==3.1.1
 protobuf==3.4.0
 requests==2.18.4
